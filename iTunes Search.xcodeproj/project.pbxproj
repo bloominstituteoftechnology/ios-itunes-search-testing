@@ -19,6 +19,7 @@
 		83882FFC244E01A900F8A690 /* iTunes_SearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83882FFB244E01A900F8A690 /* iTunes_SearchTests.swift */; };
 		83883005244E0B9800F8A690 /* NetworkDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83883004244E0B9800F8A690 /* NetworkDataLoader.swift */; };
 		83883007244E0C2B00F8A690 /* URLSession+NetworkDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83883006244E0C2B00F8A690 /* URLSession+NetworkDataLoader.swift */; };
+		83883009244E11F200F8A690 /* MockDataLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83883008244E11F200F8A690 /* MockDataLoading.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		83882FFD244E01A900F8A690 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83883004244E0B9800F8A690 /* NetworkDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDataLoader.swift; sourceTree = "<group>"; };
 		83883006244E0C2B00F8A690 /* URLSession+NetworkDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+NetworkDataLoader.swift"; sourceTree = "<group>"; };
+		83883008244E11F200F8A690 /* MockDataLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataLoading.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 			children = (
 				83882FFB244E01A900F8A690 /* iTunes_SearchTests.swift */,
 				83882FFD244E01A900F8A690 /* Info.plist */,
+				83883008244E11F200F8A690 /* MockDataLoading.swift */,
 			);
 			path = "iTunes SearchTests";
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83883009244E11F200F8A690 /* MockDataLoading.swift in Sources */,
 				83882FFC244E01A900F8A690 /* iTunes_SearchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
