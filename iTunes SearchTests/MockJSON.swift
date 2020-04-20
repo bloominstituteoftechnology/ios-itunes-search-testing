@@ -23,3 +23,23 @@ let goodResultData = """
     ]
 }
 """.data(using: .utf8)!
+
+let badResultData = """
+{
+  "resultCount": 2,
+  "results":
+        {
+          "trackName": "GarageBand",
+          "akName": "Garage Virtual Drumset Band",
+          "artistName": "Nexogen Private Limited",
+        }
+    ] Fuck Segues
+}
+""".data(using: .utf8)!
+
+let noResultsData = """
+{
+  "resultCount": 0,
+  "results": []
+}
+""".data(using: .utf8)!
