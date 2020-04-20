@@ -20,18 +20,29 @@ import XCTest
  Is the completion handler called when the network fails?
  
  
+ create expectation
+ create controller
+ schedule work
+ then wait
+ 
  */
 
 class iTunes_SearchTests: XCTestCase {
 //runs perform search method
     
     func testForSomeResults() {
+        
+        //creating a expectation
+        let expectation = self.expectation(description: "Wait for results")
         let controller = SearchResultController()
         
         controller.performSearch(for: "GarageBand", resultType: .software) {
-            print("Returned Valid Results ⚠️")
+            print("Returned Results ⚠️")
             XCTAssertGreaterThan(controller.searchResults.count, 0)
+            expectation.fulfill()
         }
+        
+        wait(for: [expectation], timeout: 5)
     }
 
 }
