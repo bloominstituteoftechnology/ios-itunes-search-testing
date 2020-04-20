@@ -72,6 +72,26 @@ class iTunes_SearchTests: XCTestCase {
             wait(for: [expectation], timeout: 5)
         }
     }
+    
+    func testValidData() {
+        let mockDataLoader = MockDataLoader(data: goodResultData, response: nil, error: nil)
+        
+        let expectation = self.expectation(description: "Wait for results")
+        let controller = SearchResultController(dataLoader: mockDataLoader)
+        controller.performSearch(for: "GarageBand", resultType: .software) {
+            //json has two results, this lets us know if this works fine
+            
+            XCTAssertEqual(controller.searchResults.count, 2, "expected 2 results for \"GarageBand\"⚠️")
+           
+            let firstResult = controller.searchResults[0]
+            
+            XCTAssertEqual(firstResult.title, "GarageBand")
+            XCTAssertEqual(firstResult.artist, "Apple")
+            
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 5)
+    }
 }
 
 
