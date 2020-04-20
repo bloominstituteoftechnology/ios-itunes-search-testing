@@ -10,13 +10,13 @@ import XCTest
 @testable import iTunes_Search
 /*
  
- Does decoding work?
- Does decoding fail when given bad data?
+ Does decoding work? ✅
+ Does decoding fail when given bad data?✅
  Does it build the correct URL?
  Does it build the correct URLRequest?
- are the search results saved properly?
- Is the completion handler called when data is good?
- Is the completion handler called when data is bad?
+ are the search results saved properly?✅
+ Is the completion handler called when data is good?✅
+ Is the completion handler called when data is bad?✅
  Is the completion handler called when the network fails?
  
  
