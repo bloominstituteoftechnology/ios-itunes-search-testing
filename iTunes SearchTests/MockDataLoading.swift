@@ -33,3 +33,11 @@ class MockDataLoader: NetworkDataLoader {
         }
     }
 }
+
+extension Data {
+    func mockjsonData(with name: String) -> Data {
+        let bundle = Bundle(for: MockDataLoader.self)
+        let url = bundle.url(forResource: name, withExtension: "json")!
+        return try! Data(contentsOf: url)
+    }
+}
