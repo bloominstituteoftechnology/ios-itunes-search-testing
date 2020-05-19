@@ -2,86 +2,84 @@
 //  iTunes_SearchTests.swift
 //  iTunes SearchTests
 //
-//  Created by Joseph Rogers on 4/20/20.
+//  Created by Dimitri Bouniol Lambda on 5/18/20.
 //  Copyright © 2020 Lambda School. All rights reserved.
 //
 
 import XCTest
 @testable import iTunes_Search
+
 /*
- 
- Does decoding work? ✅
- Does decoding fail when given bad data?✅
- Does it build the correct URL?
- Does it build the correct URLRequest?
- are the search results saved properly?✅
- Is the completion handler called when data is good?✅
- Is the completion handler called when data is bad?✅
- Is the completion handler called when the network fails?
- 
- 
- create expectation
- create controller
- schedule work
- then wait
- 
- */
+
+Does decoding work?
+Does decoding fail when given bad data?
+Does it build the correct URL?
+Does it build the correct URLRequest?
+Are the search results saved properly?
+Is the completion handler called when data is good?
+Is the completion handler called when data is bad?
+Is the completion handler called when networking fails?
+
+*/
 
 class iTunes_SearchTests: XCTestCase {
-    //runs perform search method
-    
+
     func testForSomeResults() {
-        
-        //creating a expectation
         let expectation = self.expectation(description: "Wait for results")
-        //creating a controller to work with within the test.
+//        let expectation = XCTestExpectation(description: "") // These are identical
+        
         let controller = SearchResultController()
         
-        controller.performSearch(for: "GarageBand", resultType: .software) {
-            print("Returned Results ⚠️")
+        controller.performSearch(for: "GarageBand", resultType: .software) { // (searchResults) in
+            print("🥰 We got back some results!")
             XCTAssertGreaterThan(controller.searchResults.count, 0)
             expectation.fulfill()
         }
         
         wait(for: [expectation], timeout: 5)
+        
+        XCTAssertGreaterThan(controller.searchResults.count, 0)
     }
-    //how to see how long the network took to get back to us 👇
     
-    func testSpeedOfNetworkRequest() {
+    func testSpeedOfTypicalRequest() {
         measure {
             let expectation = self.expectation(description: "Wait for results")
+            
             let controller = SearchResultController(dataLoader: URLSession(configuration: .ephemeral))
+            
             controller.performSearch(for: "GarageBand", resultType: .software) {
                 expectation.fulfill()
             }
+            
             wait(for: [expectation], timeout: 5)
         }
     }
     
-    //Detailed measurement - the shared URL is caching data in the policy so keep that in mind.
-    func testSpeedOfAccurateNetworkRequest() {
-        
+    func testSpeedOfTypicalRequestMoreAccurately() {
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             let expectation = self.expectation(description: "Wait for results")
+            
             let controller = SearchResultController(dataLoader: URLSession(configuration: .ephemeral))
+            
             startMeasuring()
             controller.performSearch(for: "GarageBand", resultType: .software) {
                 self.stopMeasuring()
                 expectation.fulfill()
             }
+            
             wait(for: [expectation], timeout: 5)
         }
     }
     
     func testValidData() {
-        let mockDataLoader = MockDataLoader(data: goodResultData, response: nil, error: nil)
+        let mockDataLoader = MockDataLoader(data: .mockJSONData(with: "GoodData"), response: nil, error: nil)
         
         let expectation = self.expectation(description: "Wait for results")
+        
         let controller = SearchResultController(dataLoader: mockDataLoader)
+        
         controller.performSearch(for: "GarageBand", resultType: .software) {
-            //json has two results, this lets us know if this works fine
-            
-            XCTAssertEqual(controller.searchResults.count, 2, "expected 2 results for \"GarageBand\"⚠️")
+            XCTAssertEqual(controller.searchResults.count, 2, "Expected 2 results for \"GarageBand\"")
             
             let firstResult = controller.searchResults[0]
             
@@ -90,34 +88,97 @@ class iTunes_SearchTests: XCTestCase {
             
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 5)
+        
+        wait(for: [expectation], timeout: 1)
+        
     }
     
-    func testInValidJSON() {
-        let mockDataLoader = MockDataLoader(data: badResultData, response: nil, error: nil)
+    func testInvalidData() {
+        let mockDataLoader = MockDataLoader(data: .mockJSONData(with: "BadData"), response: nil, error: nil)
         
         let expectation = self.expectation(description: "Wait for results")
+        
         let controller = SearchResultController(dataLoader: mockDataLoader)
+        
         controller.performSearch(for: "GarageBand", resultType: .software) {
-            XCTAssertEqual(controller.searchResults.count, 0, "expected 0 results for \"GarageBand\"⚠️")
-            XCTAssertTrue(controller.searchResults.isEmpty)
+            XCTAssertEqual(controller.searchResults.count, 0, "Expected 0 results for \"GarageBand\"")
+            
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 5)
+        
+        wait(for: [expectation], timeout: 1)
+        
     }
     
-    func testNoResultsData() {
-        let mockDataLoader = MockDataLoader(data: noResultsData, response: nil, error: nil)
+    func testLoadingBadDataAfterValidResults() {
+        let goodMockDataLoader = MockDataLoader(data: .mockJSONData(with: "GoodData"), response: nil, error: nil)
+        
+        let goodExpectation = self.expectation(description: "Wait for good results")
+        
+        let controller = SearchResultController(dataLoader: goodMockDataLoader)
+        
+        controller.performSearch(for: "GarageBand", resultType: .software) {
+            XCTAssertEqual(controller.searchResults.count, 2, "Expected 2 results for \"GarageBand\"")
+            
+            let firstResult = controller.searchResults[0]
+            
+            XCTAssertEqual(firstResult.title, "GarageBand")
+            XCTAssertEqual(firstResult.artist, "Apple")
+            
+            goodExpectation.fulfill()
+        }
+        
+        wait(for: [goodExpectation], timeout: 1)
+        
+        let badMockDataLoader = MockDataLoader(data: .mockJSONData(with: "BadData"), response: nil, error: nil)
+        
+        let badExpectation = self.expectation(description: "Wait for bad results")
+        
+        controller.dataLoader = badMockDataLoader
+        
+        controller.performSearch(for: "GarageBand", resultType: .software) {
+            XCTAssertEqual(controller.searchResults.count, 0, "Expected 0 results for \"GarageBand\"")
+            
+            badExpectation.fulfill()
+        }
+        
+        wait(for: [badExpectation], timeout: 1)
+    }
+    
+    func testUnavailableNetwork() {
+        let mockDataLoader = MockDataLoader(data: nil, response: nil, error: NSError(domain: NSURLErrorDomain, code: NSURLErrorCannotConnectToHost, userInfo: nil))
         
         let expectation = self.expectation(description: "Wait for results")
+        
         let controller = SearchResultController(dataLoader: mockDataLoader)
-        controller.performSearch(for: "af;woeifawoef", resultType: .software) {
-            XCTAssertEqual(controller.searchResults.count, 0, "expected 2 results for \"af;woeifawoef\"⚠️")
-            XCTAssertTrue(controller.searchResults.isEmpty)
+        
+        controller.performSearch(for: "GarageBand", resultType: .software) {
+            XCTAssertEqual(controller.searchResults.count, 0, "Expected 0 results for \"GarageBand\"")
+            
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 5)
+        
+        wait(for: [expectation], timeout: 1)
     }
+    
+    func testCorrectURLRequest() {
+        let mockDataLoader = MockDataLoader(data: .mockJSONData(with: "GoodData"), response: nil, error: nil)
+        
+        let expectation = self.expectation(description: "Wait for results")
+        
+        let controller = SearchResultController(dataLoader: mockDataLoader)
+        
+        controller.performSearch(for: "GarageBand", resultType: .software) {
+            
+            XCTAssertEqual(mockDataLoader.request?.httpMethod, HTTPMethod.get.rawValue)
+            XCTAssertEqual(mockDataLoader.request?.url, URL(string: "https://itunes.apple.com/search?term=GarageBand&entity=software")!)
+            
+            XCTAssertEqual(controller.searchResults.count, 2, "Expected 2 results for \"GarageBand\"")
+            
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 1)
+    }
+
 }
-
-
